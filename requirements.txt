@@ -1,0 +1,6 @@
+flask
+anthropic
+voyageai
+pypdf
+numpy
+python-dotenv
