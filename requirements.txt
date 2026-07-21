@@ -4,3 +4,5 @@ voyageai
 pypdf
 numpy
 python-dotenv
+pandas
+openpyxl
