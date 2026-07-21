@@ -19,9 +19,12 @@ Sources: b9abdeaf-ffcb-46c4-8e1b-16935a594875.pdf, c0a37625-c8ee-44f2-885f-7b304
 
 ## Deployment
 
-Live app: _[to be added after deployment]_
+Live app: https://marketplace-documentation-agent.onrender.com/
 
-Screenshot: _[to be added after deployment]_
+The app is deployed on Render's free tier. Note: on the free plan, the service spins down after periods of inactivity, so the first request after idle time may take 30-60 seconds to respond while it wakes up.
+
+![Agent running in production](screenshots/screenshots0101demo.png)
+
 
 ## Design notes
 
