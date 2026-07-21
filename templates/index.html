@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mercado Central 24h — Agente de documentación</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+<style>
+    :root {
+        --bg-page: #10162B;
+        --bg-page-2: #1A2140;
+        --card: #FFFFFF;
+        --accent: #F2A93B;
+        --accent-dark: #8A5A14;
+        --accent-bg: #FDF1DD;
+        --text-dark: #1B1F2A;
+        --text-muted: #6B7280;
+        --border-light: #E4E7EE;
+        --pregunta-bg: #EEF1F8;
+        --disponible: #34D399;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+        margin: 0;
+        min-height: 100vh;
+        background: linear-gradient(180deg, var(--bg-page) 0%, var(--bg-page-2) 100%);
+        font-family: 'Inter', -apple-system, sans-serif;
+        display: flex;
+        justify-content: center;
+        padding: 32px 16px;
+    }
+
+    .app {
+        width: 100%;
+        max-width: 1000px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .encabezado {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 18px;
+        padding: 0 4px;
+    }
+
+    .marca { display: flex; align-items: center; gap: 12px; }
+
+    .marca-icono {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: var(--accent);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: 600;
+        font-size: 15px;
+        color: var(--accent-dark);
+    }
+
+    .marca-texto h1 {
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: 600;
+        font-size: 18px;
+        color: #FFFFFF;
+        margin: 0;
+        letter-spacing: -0.01em;
+    }
+
+    .marca-texto p { font-size: 13px; color: #A6ADC4; margin: 2px 0 0; }
+
+    .estado {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 13px;
+        color: #C9CEDD;
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.1);
+        padding: 6px 12px;
+        border-radius: 999px;
+    }
+
+    .punto-pulso {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--disponible);
+        animation: pulso 2s infinite;
+    }
+
+    @keyframes pulso {
+        0% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.5); }
+        70% { box-shadow: 0 0 0 7px rgba(52, 211, 153, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
+    }
+
+    /* --- Layout de 2 columnas --- */
+    .layout {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 16px;
+        align-items: start;
+    }
+
+    @media (max-width: 760px) {
+        .layout { grid-template-columns: 1fr; }
+    }
+
+    /* --- Panel de FAQs --- */
+    .panel-faq {
+        background: var(--card);
+        border-radius: 16px;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+        max-height: 600px;
+        overflow-y: auto;
+        padding: 8px;
+    }
+
+    .faq-seccion { border-bottom: 1px solid var(--border-light); }
+    .faq-seccion:last-child { border-bottom: none; }
+
+    .faq-seccion-titulo {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: none;
+        border: none;
+        padding: 14px 12px;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text-dark);
+        cursor: pointer;
+        text-align: left;
+    }
+
+    .faq-seccion-titulo .flecha {
+        font-size: 12px;
+        color: var(--text-muted);
+        transition: transform 0.2s ease;
+    }
+
+    .faq-seccion.abierta .faq-seccion-titulo .flecha { transform: rotate(180deg); }
+
+    .faq-lista {
+        display: none;
+        flex-direction: column;
+        gap: 6px;
+        padding: 0 12px 14px;
+    }
+
+    .faq-seccion.abierta .faq-lista { display: flex; }
+
+    .faq-item {
+        text-align: left;
+        background: #FAFAFC;
+        border: 1px solid var(--border-light);
+        border-radius: 8px;
+        padding: 9px 11px;
+        font-size: 13px;
+        color: var(--text-dark);
+        cursor: pointer;
+        font-family: 'Inter', sans-serif;
+        line-height: 1.4;
+    }
+
+    .faq-item:hover { border-color: var(--accent); background: var(--accent-bg); }
+
+    /* --- Panel de chat --- */
+    .panel-chat {
+        background: var(--card);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+        display: flex;
+        flex-direction: column;
+        height: 600px;
+    }
+
+    #conversacion {
+        padding: 24px;
+        flex: 1;
+        overflow-y: auto;
+    }
+
+    .bienvenida {
+        color: var(--text-muted);
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .bienvenida strong { color: var(--text-dark); }
+
+    .mensaje { margin-bottom: 24px; }
+
+    .burbuja-pregunta {
+        display: inline-block;
+        background: var(--pregunta-bg);
+        color: var(--text-dark);
+        font-weight: 500;
+        font-size: 14.5px;
+        padding: 10px 14px;
+        border-radius: 12px 12px 12px 2px;
+        margin-bottom: 10px;
+        max-width: 90%;
+    }
+
+    .respuesta { color: var(--text-dark); font-size: 14.5px; line-height: 1.65; }
+    .respuesta p { margin: 0 0 10px; }
+    .respuesta ul, .respuesta ol { margin: 0 0 10px; padding-left: 20px; }
+    .respuesta li { margin-bottom: 4px; }
+    .respuesta h1, .respuesta h2, .respuesta h3 {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 15.5px;
+        margin: 14px 0 8px;
+        color: var(--text-dark);
+    }
+    .respuesta strong { color: var(--text-dark); }
+    .respuesta table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 13.5px; }
+    .respuesta th, .respuesta td { border: 1px solid var(--border-light); padding: 6px 10px; text-align: left; }
+    .respuesta th { background: #F8F9FB; font-weight: 600; }
+
+    .fuentes {
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-top: 10px;
+        padding-top: 8px;
+        border-top: 1px dashed var(--border-light);
+    }
+
+    .cargando::after {
+        content: "";
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        margin-left: 4px;
+        border: 2px solid var(--border-light);
+        border-top-color: var(--accent);
+        border-radius: 50%;
+        animation: girar 0.7s linear infinite;
+        vertical-align: middle;
+    }
+
+    @keyframes girar { to { transform: rotate(360deg); } }
+
+    form {
+        display: flex;
+        gap: 10px;
+        padding: 16px 20px;
+        border-top: 1px solid var(--border-light);
+        background: #FAFAFC;
+        flex-shrink: 0;
+    }
+
+    input[type="text"] {
+        flex: 1;
+        padding: 12px 14px;
+        border-radius: 10px;
+        border: 1px solid var(--border-light);
+        font-size: 14.5px;
+        font-family: 'Inter', sans-serif;
+        outline: none;
+    }
+
+    input[type="text"]:focus { border-color: var(--accent); }
+
+    button {
+        padding: 12px 20px;
+        border: none;
+        border-radius: 10px;
+        background: var(--accent);
+        color: var(--accent-dark);
+        font-weight: 600;
+        font-size: 14.5px;
+        cursor: pointer;
+        font-family: 'Inter', sans-serif;
+    }
+
+    button:disabled { background: #E4E7EE; color: #A0A5B0; cursor: default; }
+
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-thumb { background: #D8DCE6; border-radius: 8px; }
+</style>
+</head>
+<body>
+    <div class="app">
+        <div class="encabezado">
+            <div class="marca">
+                <div class="marca-icono">MC</div>
+                <div class="marca-texto">
+                    <h1>Mercado Central 24h</h1>
+                    <p>Agente de documentación interna</p>
+                </div>
+            </div>
+            <div class="estado">
+                <span class="punto-pulso"></span>
+                Disponible 24/7
+            </div>
+        </div>
+
+        <div class="layout">
+            <!-- Panel de FAQs -->
+            <div class="panel-faq" id="panel-faq">
+                <div class="faq-seccion abierta">
+                    <button type="button" class="faq-seccion-titulo">
+                        Para clientes
+                        <span class="flecha">▾</span>
+                    </button>
+                    <div class="faq-lista">
+                        <button type="button" class="faq-item">¿Cuál es el horario de atención al cliente?</button>
+                        <button type="button" class="faq-item">¿Qué hago si un pedido llega dañado?</button>
+                        <button type="button" class="faq-item">¿Cómo funciona el programa "Cliente VIP Central"?</button>
+                        <button type="button" class="faq-item">¿Cuál es la política de cambios y devoluciones?</button>
+                        <button type="button" class="faq-item">¿Qué métodos de pago aceptan?</button>
+                    </div>
+                </div>
+
+                <div class="faq-seccion">
+                    <button type="button" class="faq-seccion-titulo">
+                        Para empleados
+                        <span class="flecha">▾</span>
+                    </button>
+                    <div class="faq-lista">
+                        <button type="button" class="faq-item">¿Qué prestaciones tienen los empleados desde el primer día?</button>
+                        <button type="button" class="faq-item">¿Cómo se gestionan los permisos y ausencias?</button>
+                        <button type="button" class="faq-item">¿Cuál es el protocolo de conducta y escalamiento?</button>
+                        <button type="button" class="faq-item">¿Qué capacitación reciben los nuevos empleados?</button>
+                        <button type="button" class="faq-item">¿Qué servicios e instalaciones internas están disponibles?</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel de chat -->
+            <div class="panel-chat">
+                <div id="conversacion">
+                    <div class="bienvenida">
+                        <strong>¿En qué te puedo ayudar?</strong><br>
+                        Elegí una pregunta del panel de la izquierda o escribí la tuya abajo.
+                    </div>
+                </div>
+
+                <form id="formulario">
+                    <input type="text" id="pregunta" placeholder="Escribí tu pregunta..." autocomplete="off" required>
+                    <button type="submit" id="boton">Preguntar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const formulario = document.getElementById("formulario");
+        const inputPregunta = document.getElementById("pregunta");
+        const conversacion = document.getElementById("conversacion");
+        const boton = document.getElementById("boton");
+        const panelFaq = document.getElementById("panel-faq");
+
+        // Acordeón de secciones FAQ
+        panelFaq.querySelectorAll(".faq-seccion-titulo").forEach((titulo) => {
+            titulo.addEventListener("click", () => {
+                titulo.closest(".faq-seccion").classList.toggle("abierta");
+            });
+        });
+
+        // Click en una pregunta sugerida
+        panelFaq.querySelectorAll(".faq-item").forEach((item) => {
+            item.addEventListener("click", () => enviarPregunta(item.textContent));
+        });
+
+        async function enviarPregunta(pregunta) {
+            const bloque = document.createElement("div");
+            bloque.className = "mensaje";
+            bloque.innerHTML = `
+                <div class="burbuja-pregunta"></div>
+                <div class="respuesta cargando">Pensando</div>
+            `;
+            bloque.querySelector(".burbuja-pregunta").textContent = pregunta;
+            conversacion.appendChild(bloque);
+            conversacion.scrollTop = conversacion.scrollHeight;
+
+            boton.disabled = true;
+
+            try {
+                const respuesta = await fetch("/preguntar", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ pregunta })
+                });
+                const datos = await respuesta.json();
+
+                const divRespuesta = bloque.querySelector(".respuesta");
+                divRespuesta.classList.remove("cargando");
+
+                if (datos.error) {
+                    divRespuesta.textContent = "⚠ " + datos.error;
+                } else {
+                    divRespuesta.innerHTML = marked.parse(datos.respuesta);
+
+                    if (datos.fuentes && datos.fuentes.length > 0) {
+                        const divFuentes = document.createElement("div");
+                        divFuentes.className = "fuentes";
+                        divFuentes.textContent = "Fuentes: " + datos.fuentes.join(", ");
+                        bloque.appendChild(divFuentes);
+                    }
+                }
+            } catch (error) {
+                bloque.querySelector(".respuesta").textContent = "⚠ Error de conexión.";
+                bloque.querySelector(".respuesta").classList.remove("cargando");
+            }
+
+            conversacion.scrollTop = conversacion.scrollHeight;
+            boton.disabled = false;
+            inputPregunta.focus();
+        }
+
+        formulario.addEventListener("submit", (evento) => {
+            evento.preventDefault();
+            const pregunta = inputPregunta.value.trim();
+            if (!pregunta) return;
+            inputPregunta.value = "";
+            enviarPregunta(pregunta);
+        });
+    </script>
+</body>
+</html>
