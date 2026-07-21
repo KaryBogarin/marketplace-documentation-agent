@@ -9,9 +9,6 @@ import os
 
 
 def leer_pdf(ruta_archivo):
-    """
-    Lee un archivo PDF y devuelve todo su texto como un solo string.
-    """
     lector = PdfReader(ruta_archivo)
     texto_completo = ""
 
@@ -24,11 +21,7 @@ def leer_pdf(ruta_archivo):
 
 
 def leer_excel(ruta_archivo):
-    """
-    Lee un archivo Excel (todas sus hojas) y devuelve el contenido
-    convertido a texto, fila por fila, para que el agente pueda entenderlo.
-    """
-    hojas = pd.read_excel(ruta_archivo, sheet_name=None)  # sheet_name=None lee todas las hojas
+    hojas = pd.read_excel(ruta_archivo, sheet_name=None)
     texto_completo = ""
 
     for nombre_hoja, dataframe in hojas.items():
@@ -45,11 +38,6 @@ def leer_excel(ruta_archivo):
 
 
 def dividir_en_fragmentos(texto, tamano_fragmento=1000, superposicion=200):
-    """
-    Divide un texto largo en fragmentos más pequeños ("chunks"),
-    con un poco de superposición entre ellos para no perder contexto
-    en los bordes de cada fragmento.
-    """
     fragmentos = []
     inicio = 0
 
@@ -59,14 +47,14 @@ def dividir_en_fragmentos(texto, tamano_fragmento=1000, superposicion=200):
         fragmentos.append(fragmento.strip())
         inicio += tamano_fragmento - superposicion
 
-    return [f for f in fragmentos if f]  # elimina fragmentos vacíos
+    return [f for f in fragmentos if f]
 
 
-def procesar_carpeta_documentos(carpeta="documentos"):
-    """
-    Lee todos los PDFs y Excels de una carpeta y devuelve una lista de
-    fragmentos, cada uno con el texto y el nombre del archivo de origen.
-    """
+def procesar_carpeta_documentos(carpeta=None):
+    if carpeta is None:
+        raiz_proyecto = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        carpeta = os.path.join(raiz_proyecto, "documentos")
+
     todos_los_fragmentos = []
 
     for nombre_archivo in os.listdir(carpeta):
@@ -92,7 +80,6 @@ def procesar_carpeta_documentos(carpeta="documentos"):
     return todos_los_fragmentos
 
 
-# Esto solo se ejecuta si corres este archivo directamente (para probar)
 if __name__ == "__main__":
     fragmentos = procesar_carpeta_documentos()
     print(f"\n✅ Se generaron {len(fragmentos)} fragmentos en total.")

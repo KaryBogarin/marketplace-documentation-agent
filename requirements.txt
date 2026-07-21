@@ -1,6 +1,6 @@
 flask
 anthropic
-voyageai
+google-genai
 pypdf
 numpy
 python-dotenv
